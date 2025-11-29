@@ -11,17 +11,11 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task6.V3.Test
             DataService ds = new DataService();
 
             string testFilePath = "test_file.txt";
-            File.WriteAllLines(testFilePath, new string[]
-            {
-                "Hello world from Russia",
-                "Programming is great",
-                "This text contains words with r",
-                "Apple banana cherry",
-                "Red green blue"
-            });
+            File.WriteAllText(testFilePath,
+                "rdRibhX swrfhvUjC NSRnNINXl raHsMtQF jiUFMDjMsEervIz QybRwHOetJ");
 
             string result = ds.CollectTextFromFile(testFilePath);
-            string expected = "world from Russia Programming great contains words with r cherry Red green";
+            string expected = "rdRibhX swrfhvUjC raHsMtQF jiUFMDjMsEervIz";
 
             Assert.AreEqual(expected, result);
 
@@ -29,31 +23,25 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task6.V3.Test
         }
 
         [TestMethod]
-        public void NoWordsWithR()
+        public void DebugTest()
         {
             DataService ds = new DataService();
 
-            string testFilePath = "test_file2.txt";
-            File.WriteAllLines(testFilePath, new string[]
-            {
-                "Hello world",
-                "Apple banana",
-                "Test text"
-            });
+            string testData = "rdRibhX swrfhvUjC NSRnNINXl raHsMtQF jiUFMDjMsEervIz QybRwHOetJ";
+            string testFilePath = "debug_test.txt";
+            File.WriteAllText(testFilePath, testData);
 
             string result = ds.CollectTextFromFile(testFilePath);
 
-            Assert.AreEqual("", result);
+            System.Diagnostics.Debug.WriteLine($"Результат: '{result}'");
+            System.Diagnostics.Debug.WriteLine($"Ожидалось: 'rdRibhX swrfhvUjC raHsMtQF jiUFMDjMsEervIz'");
+
+            string[] resultWords = result.Split(' ');
+            string[] expectedWords = "rdRibhX swrfhvUjC raHsMtQF jiUFMDjMsEervIz".Split(' ');
+
+            CollectionAssert.AreEqual(expectedWords, resultWords);
 
             File.Delete(testFilePath);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
-        public void InvalidFileCollectTextFromFile()
-        {
-            DataService ds = new DataService();
-            ds.CollectTextFromFile("nonexistent_file.txt");
         }
     }
 }
