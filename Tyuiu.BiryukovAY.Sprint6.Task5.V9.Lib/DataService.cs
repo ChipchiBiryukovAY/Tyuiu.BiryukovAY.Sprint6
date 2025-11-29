@@ -7,7 +7,7 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
     {
         public double[] LoadFromDataFile(string path)
         {
-            List<double> numbers = new List<double>();
+            List<double> zeroNumbers = new List<double>();
 
             try
             {
@@ -17,7 +17,11 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
                 {
                     if (double.TryParse(line.Trim(), out double number))
                     {
-                        numbers.Add(Math.Round(number, 3)); 
+                        double roundedNumber = Math.Round(number, 3);
+                        if (Math.Abs(roundedNumber) < 0.001)
+                        {
+                            zeroNumbers.Add(roundedNumber);
+                        }
                     }
                 }
             }
@@ -26,7 +30,7 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
                 throw new Exception($"Ошибка чтения файла: {ex.Message}");
             }
 
-            return numbers.ToArray();
+            return zeroNumbers.ToArray();
         }
     }
 }
