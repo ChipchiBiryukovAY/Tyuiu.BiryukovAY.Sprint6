@@ -7,22 +7,26 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
     {
         public double[] LoadFromDataFile(string path)
         {
-            string[] lines = File.ReadAllLines(path);
+            List<double> numbers = new List<double>();
 
-            double[] numbers = lines
-                .Where(line => !string.IsNullOrWhiteSpace(line))
-                .Select(line => double.Parse(line.Trim()))
-                .ToArray();
+            try
+            {
+                string[] lines = File.ReadAllLines(path);
 
-            return numbers;
-        }
+                foreach (string line in lines)
+                {
+                    if (double.TryParse(line.Trim(), out double number))
+                    {
+                        numbers.Add(Math.Round(number, 3)); 
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка чтения файла: {ex.Message}");
+            }
 
-        public double[] GetZeroElements(double[] array)
-        {
-            return array
-                .Where(x => Math.Abs(x) < 0.0001)
-                .Select(x => Math.Round(x, 3)) 
-                .ToArray();
+            return numbers.ToArray();
         }
     }
 }
