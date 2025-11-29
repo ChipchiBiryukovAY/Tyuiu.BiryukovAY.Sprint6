@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using tyuiu.cources.programming.interfaces.Sprint6;
 namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
 {
@@ -6,7 +7,7 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
     {
         public double[] LoadFromDataFile(string path)
         {
-            List<double> numbers = new List<double>();
+            List<double> zeroElements = new List<double>();
 
             try
             {
@@ -14,18 +15,26 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
 
                 foreach (string line in lines)
                 {
-                    if (double.TryParse(line.Trim(), out double number))
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    if (double.TryParse(line.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out double number))
                     {
-                        numbers.Add(Math.Round(number, 3));
+                        double roundedNumber = Math.Round(number, 3);
+
+                        if (Math.Abs(roundedNumber) < 0.0001)
+                        {
+                            zeroElements.Add(roundedNumber);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Ошибка чтения файла: {ex.Message}");
+                throw new Exception($"Ошибка при чтении файла: {ex.Message}");
             }
 
-            return numbers.ToArray();
+            return zeroElements.ToArray();
         }
     }
 }
