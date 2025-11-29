@@ -14,12 +14,14 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task6.V3.Lib
 
                 foreach (string line in lines)
                 {
+ 
                     string[] words = line.Split(new char[] { ' ', '\t', ',', '.', '!', '?', ';', ':', '(', ')', '[', ']', '{', '}', '"', '\'' },
                                               StringSplitOptions.RemoveEmptyEntries);
 
                     foreach (string word in words)
                     {
-                        if (word.IndexOf('r', StringComparison.OrdinalIgnoreCase) >= 0)
+
+                        if (word.Contains('r'))
                         {
                             wordsWithR.Add(word);
                         }
