@@ -7,34 +7,22 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task5.V9.Lib
     {
         public double[] LoadFromDataFile(string path)
         {
-            List<double> zeroElements = new List<double>();
+            string[] lines = File.ReadAllLines(path);
 
-            try
-            {
-                string[] lines = File.ReadAllLines(path);
+            double[] numbers = lines
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => double.Parse(line.Trim()))
+                .ToArray();
 
-                foreach (string line in lines)
-                {
-                    if (string.IsNullOrWhiteSpace(line))
-                        continue;
+            return numbers;
+        }
 
-                    if (double.TryParse(line.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out double number))
-                    {
-                        double roundedNumber = Math.Round(number, 3);
-
-                        if (Math.Abs(roundedNumber) < 0.0001)
-                        {
-                            zeroElements.Add(roundedNumber);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка при чтении файла: {ex.Message}");
-            }
-
-            return zeroElements.ToArray();
+        public double[] GetZeroElements(double[] array)
+        {
+            return array
+                .Where(x => Math.Abs(x) < 0.0001)
+                .Select(x => Math.Round(x, 3)) 
+                .ToArray();
         }
     }
 }
