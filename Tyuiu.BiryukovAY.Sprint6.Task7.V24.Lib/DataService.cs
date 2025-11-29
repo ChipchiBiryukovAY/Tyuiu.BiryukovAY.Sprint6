@@ -7,50 +7,26 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24.Lib
     {
         public int[,] GetMatrix(string path)
         {
+            int rows = 10;
+            int cols = 10;
+            int[,] matrix = new int[rows, cols];
+
             try
             {
-                string[] allLines = File.ReadAllLines(path);
+                string[] lines = File.ReadAllLines(path);
 
-                List<string> validLines = new List<string>();
-                foreach (string line in allLines)
+                for (int i = 0; i < rows && i < lines.Length; i++)
                 {
-                    string trimmedLine = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmedLine))
+                    string line = lines[i].Trim();
+                    if (string.IsNullOrEmpty(line)) continue;
+
+                    string[] parts = line.Split(',');
+
+                    for (int j = 0; j < cols && j < parts.Length; j++)
                     {
-                        validLines.Add(trimmedLine);
-                    }
-                }
-
-                if (validLines.Count == 0)
-                    return new int[0, 0];
-
-                string[] firstLineValues = ParseCSVLine(validLines[0]);
-                int rowCount = validLines.Count;
-                int colCount = firstLineValues.Length;
-
-                int[,] matrix = new int[rowCount, colCount];
-
-                for (int i = 0; i < rowCount; i++)
-                {
-                    string[] values = ParseCSVLine(validLines[i]);
-
-                    for (int j = 0; j < colCount; j++)
-                    {
-                        if (j < values.Length)
+                        if (int.TryParse(parts[j].Trim(), out int value))
                         {
-                            string cleanValue = values[j].Trim();
-                            if (int.TryParse(cleanValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
-                            {
-                                matrix[i, j] = value;
-                            }
-                            else
-                            {
-                                matrix[i, j] = 0;
-                            }
-                        }
-                        else
-                        {
-                            matrix[i, j] = 0;
+                            matrix[i, j] = value;
                         }
                     }
                 }
@@ -63,11 +39,6 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24.Lib
             }
         }
 
-        private string[] ParseCSVLine(string line)
-        {
-            return line.Split(',');
-        }
-
         public int[,] ProcessMatrix(int[,] matrix)
         {
             int rows = matrix.GetLength(0);
@@ -75,12 +46,11 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24.Lib
 
             int[,] result = (int[,])matrix.Clone();
 
-            int secondRow = 1;
             for (int j = 0; j < cols; j++)
             {
-                if (result[secondRow, j] % 2 == 0)
+                if (result[1, j] % 2 == 0)
                 {
-                    result[secondRow, j] = 1;
+                    result[1, j] = 1;
                 }
             }
 
