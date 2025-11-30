@@ -4,12 +4,14 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24
 {
     public partial class FormMain : Form
     {
-        private int[,]? originalMatrix;  
+        private int[,]? originalMatrix;
         private int[,]? processedMatrix;
 
         public FormMain()
         {
             InitializeComponent();
+            ButtonExecute_BAY.Enabled = false;
+            ButtonSaveFile_BAY.Enabled = false;
         }
 
         private void ButtonOpenFile_BAY_Click(object sender, EventArgs e)
@@ -26,6 +28,7 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24
 
                     ShowMatrix(originalMatrix, DataGridViewIn_BAY);
                     LabelStatus_BAY.Text = "Файл загружен";
+                    ButtonExecute_BAY.Enabled = true;
                 }
                 catch (Exception ex)
                 {
@@ -47,6 +50,7 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24
 
             ShowMatrix(processedMatrix, DataGridViewOut_BAY);
             LabelStatus_BAY.Text = "Обработка завершена";
+            ButtonSaveFile_BAY.Enabled = true;
         }
 
         private void ButtonSaveFile_BAY_Click(object sender, EventArgs e)
@@ -84,10 +88,18 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24
 
             for (int i = 0; i < grid.RowCount; i++)
             {
+                grid.Rows[i].Height = 30;
                 for (int j = 0; j < grid.ColumnCount; j++)
                 {
                     grid.Rows[i].Cells[j].Value = matrix[i, j];
+                    grid.Rows[i].Cells[j].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    grid.Rows[i].Cells[j].Style.Font = new Font("Arial", 10, FontStyle.Bold);
                 }
+            }
+
+            for (int j = 0; j < grid.ColumnCount; j++)
+            {
+                grid.Columns[j].Width = 30;
             }
         }
 
