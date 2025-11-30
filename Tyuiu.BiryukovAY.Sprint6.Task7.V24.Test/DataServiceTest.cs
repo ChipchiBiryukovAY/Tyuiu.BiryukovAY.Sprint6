@@ -40,5 +40,22 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24.Test
             Assert.AreEqual(11, result[2, 0]);
             Assert.AreEqual(9, result[9, 0]);
         }
+        [TestMethod]
+        public void TestMethod2()
+        {
+            DataService ds = new DataService();
+
+            int[,] inputMatrix = {
+        {1, 2, 3},
+        {4, 5, 6},  
+        {7, 8, 9}
+    };
+
+            int[,] result = ds.ProcessMatrix(inputMatrix);
+
+            Assert.AreEqual(1, result[1, 0]); 
+            Assert.AreEqual(5, result[1, 1]);  
+            Assert.AreEqual(1, result[1, 2]);  
+        }
     }
 }

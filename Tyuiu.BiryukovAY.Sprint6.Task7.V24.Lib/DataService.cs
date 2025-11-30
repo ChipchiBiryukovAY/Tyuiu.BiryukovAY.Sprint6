@@ -73,7 +73,7 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24.Lib
 
             for (int j = 0; j < cols; j++)
             {
-                if (result[1, j] % 2 == 0)
+                if (matrix[1, j] % 2 == 0)
                 {
                     result[1, j] = 1;
                 }

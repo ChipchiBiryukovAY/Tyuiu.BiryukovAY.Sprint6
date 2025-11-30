@@ -1,189 +1,109 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System;
 using Tyuiu.BiryukovAY.Sprint6.Task7.V24.Lib;
-
 namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24
 {
     public partial class FormMain : Form
     {
+        private int[,]? originalMatrix;  
+        private int[,]? processedMatrix;
+
         public FormMain()
         {
             InitializeComponent();
         }
+
         private void ButtonOpenFile_BAY_Click(object sender, EventArgs e)
         {
-            try
-            {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
-                openFileDialog.Title = "Выберите CSV файл";
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "CSV files|*.csv";
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
                 {
-                    string filePath = openFileDialog.FileName;
-                    TextBoxFilePath_BAY.Text = filePath;
+                    DataService service = new DataService();
+                    originalMatrix = service.GetMatrix(dialog.FileName);
 
-                    DataService ds = new DataService();
-                    originalMatrix = ds.GetMatrix(filePath);
-
-                    DisplayMatrixInDataGridView(originalMatrix, DataGridViewIn_BAY);
-
-                    LabelStatus_BAY.Text = $"Файл загружен: {Path.GetFileName(filePath)}";
+                    ShowMatrix(originalMatrix, DataGridViewIn_BAY);
+                    LabelStatus_BAY.Text = "���� ��������";
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки файла: {ex.Message}", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LabelStatus_BAY.Text = "Ошибка загрузки файла";
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"������: {ex.Message}");
+                }
             }
         }
 
         private void ButtonExecute_BAY_Click(object sender, EventArgs e)
         {
-            try
+            if (originalMatrix == null)
             {
-                if (originalMatrix == null)
-                {
-                    MessageBox.Show("Сначала загрузите файл!", "Внимание",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                DataService ds = new DataService();
-                processedMatrix = ds.ProcessMatrix(originalMatrix);
-
-                DisplayMatrixInDataGridView(processedMatrix, DataGridViewOut_BAY);
-
-                LabelStatus_BAY.Text = "Обработка завершена. Четные элементы во второй строке заменены на 1.";
+                MessageBox.Show("������� ��������� ����!");
+                return;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка обработки: {ex.Message}", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LabelStatus_BAY.Text = "Ошибка обработки";
-            }
+
+            DataService service = new DataService();
+            processedMatrix = service.ProcessMatrix(originalMatrix);
+
+            ShowMatrix(processedMatrix, DataGridViewOut_BAY);
+            LabelStatus_BAY.Text = "��������� ���������";
         }
 
         private void ButtonSaveFile_BAY_Click(object sender, EventArgs e)
         {
-            try
+            if (processedMatrix == null)
             {
-                if (processedMatrix == null)
-                {
-                    MessageBox.Show("Сначала выполните обработку матрицы!", "Внимание",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
-                saveFileDialog.Title = "Сохранить результат в CSV файл";
-                saveFileDialog.FileName = "OutPutFileTask7.csv";
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    SaveMatrixToCsv(processedMatrix, saveFileDialog.FileName);
-                    LabelStatus_BAY.Text = $"Результат сохранен в: {Path.GetFileName(saveFileDialog.FileName)}";
-
-                    MessageBox.Show("Файл успешно сохранен!", "Успех",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка сохранения файла: {ex.Message}", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LabelStatus_BAY.Text = "Ошибка сохранения файла";
-            }
-        }
-
-        private void DisplayMatrixInDataGridView(int[,] matrix, DataGridView dataGridView)
-        {
-            int rows = matrix.GetLength(0);
-            int cols = matrix.GetLength(1);
-
-
-            dataGridView.RowHeadersVisible = false;
-            dataGridView.ColumnHeadersVisible = false;
-            dataGridView.RowCount = rows;
-            dataGridView.ColumnCount = cols;
-
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    dataGridView.Rows[i].Cells[j].Value = matrix[i, j];
-                    dataGridView.Rows[i].Cells[j].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                }
+                MessageBox.Show("������� ��������� ���������!");
+                return;
             }
 
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-        }
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "CSV files|*.csv";
+            dialog.FileName = "OutPutFileTask7.csv";
 
-        private void SaveMatrixToCsv(int[,] matrix, string filePath)
-        {
-            using (StreamWriter writer = new StreamWriter(filePath))
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                int rows = matrix.GetLength(0);
-                int cols = matrix.GetLength(1);
-
-                for (int i = 0; i < rows; i++)
-                {
-                    for (int j = 0; j < cols; j++)
-                    {
-                        writer.Write(matrix[i, j]);
-                        if (j < cols - 1)
-                        {
-                            writer.Write(",");
-                        }
-                    }
-                    writer.WriteLine();
-                }
+                SaveMatrixToFile(processedMatrix, dialog.FileName);
+                LabelStatus_BAY.Text = "���� ��������";
             }
         }
 
         private void ButtonAbout_BAY_Click(object sender, EventArgs e)
         {
-            AboutForm_BAY aboutForm = new AboutForm_BAY();
-            aboutForm.ShowDialog();
+            MessageBox.Show(
+                "�����������: ������� �.�.\n" +
+                "������: ����-25-1\n" +
+                "��������� �������������� �����������",
+                "� ���������");
         }
 
-        private void ButtonGenerateTest_BAY_Click(object sender, EventArgs e)
+        private void ShowMatrix(int[,] matrix, DataGridView grid)
         {
-            try
+            grid.RowCount = matrix.GetLength(0);
+            grid.ColumnCount = matrix.GetLength(1);
+
+            for (int i = 0; i < grid.RowCount; i++)
             {
-                string testFilePath = "InPutFileTask7V24.csv";
-                string[] testData = {
-                    "1,2,3,4,5",
-                    "6,7,8,9,10",
-                    "11,12,13,14,15",
-                    "16,17,18,19,20",
-                    "21,22,23,24,25"
-                };
-
-                File.WriteAllLines(testFilePath, testData);
-
-                TextBoxFilePath_BAY.Text = testFilePath;
-                DataService ds = new DataService();
-                originalMatrix = ds.GetMatrix(testFilePath);
-                DisplayMatrixInDataGridView(originalMatrix, DataGridViewIn_BAY);
-
-                MessageBox.Show($"Тестовый файл создан и загружен: {testFilePath}", "Успех",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                for (int j = 0; j < grid.ColumnCount; j++)
+                {
+                    grid.Rows[i].Cells[j].Value = matrix[i, j];
+                }
             }
-            catch (Exception ex)
+        }
+
+        private void SaveMatrixToFile(int[,] matrix, string path)
+        {
+            using (StreamWriter writer = new StreamWriter(path))
             {
-                MessageBox.Show($"Ошибка создания тестового файла: {ex.Message}", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                for (int i = 0; i < matrix.GetLength(0); i++)
+                {
+                    string line = "";
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        line += matrix[i, j] + (j < matrix.GetLength(1) - 1 ? "," : "");
+                    }
+                    writer.WriteLine(line);
+                }
             }
         }
     }
