@@ -25,37 +25,39 @@ namespace Tyuiu.BiryukovAY.Sprint6.Task7.V24.Test
 
             int[,] result = ds.ProcessMatrix(inputMatrix);
 
-            Assert.AreEqual(-17, result[1, 0]);
-            Assert.AreEqual(1, result[1, 1]);
-            Assert.AreEqual(5, result[1, 2]);
-            Assert.AreEqual(1, result[1, 3]);
-            Assert.AreEqual(1, result[1, 4]);
-            Assert.AreEqual(1, result[1, 5]);
-            Assert.AreEqual(1, result[1, 6]);
-            Assert.AreEqual(1, result[1, 7]);
-            Assert.AreEqual(1, result[1, 8]);
-            Assert.AreEqual(-5, result[1, 9]);
 
-            Assert.AreEqual(-19, result[0, 0]);
-            Assert.AreEqual(11, result[2, 0]);
-            Assert.AreEqual(9, result[9, 0]);
+            for (int i = 0; i < inputMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < inputMatrix.GetLength(1); j++)
+                {
+                    Assert.AreEqual(inputMatrix[i, j], result[i, j]);
+                }
+            }
         }
+
         [TestMethod]
         public void TestMethod2()
         {
             DataService ds = new DataService();
 
+
             int[,] inputMatrix = {
-        {1, 2, 3},
-        {4, 5, 6},  
-        {7, 8, 9}
-    };
+                {1, 2, 0, 4},
+                {5, 6, 0, 8},
+                {9, 10, 0, 12}
+            };
 
             int[,] result = ds.ProcessMatrix(inputMatrix);
 
-            Assert.AreEqual(1, result[1, 0]); 
-            Assert.AreEqual(5, result[1, 1]);  
-            Assert.AreEqual(1, result[1, 2]);  
+
+            Assert.AreEqual(1, result[0, 2]);
+            Assert.AreEqual(1, result[1, 2]);
+            Assert.AreEqual(1, result[2, 2]);
+
+
+            Assert.AreEqual(1, result[0, 0]);
+            Assert.AreEqual(2, result[0, 1]);
+            Assert.AreEqual(4, result[0, 3]);
         }
     }
 }
